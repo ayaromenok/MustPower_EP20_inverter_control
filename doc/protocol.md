@@ -6,13 +6,17 @@
 
 
 ### Query
-| Name      | Data        | Size |
+| Name      | Data        | Response Size |
 |:----------|:------------|:----:|
+|(HandShake?)    | "0A 03 79 18 00 07 9C 28" | - |
 |str0            | "0A 03 75 30 00 1B 1E B9" | 59 |
 |str1            | "0A 03 79 18 00 0A 5D ED" | 25 |
 |(factory) reset | "0A 10 7D 00 00 01 02 00 01 B9 A7" | |
 |(remote) reset  | "0A 10 7D 01 00 01 02 00 01 B8 76"| |
 |remote shotdown | "0A 10 7D 02 00 01 02 00 01 B8 45" | |
+| (DoWork?)      | "0A 03 79 18 00 07 9C 28" | |
+| SaveSettings   | "01 10 79 18 00 0A 14" | |
+
 
 ### Response:
 
