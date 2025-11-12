@@ -1,0 +1,16 @@
+python test00.py
+Serial port /dev/ttyUSB0 opened successfully.
+Sent byte list: [10, 3, 117, 48, 0, 27, 30, 185]
+Received data: 0a033600028e320004000c03e8085c01f4085301f40008006300b80009000000850091000000520027000000000000000000000001000100017570
+Data size: 92
+Work State:       4
+Battery Class:    12 V
+Rated Power:      1000 W
+Grid Voltage:     214.0 V
+Grid Frequence:   50.0 Hz
+Outзut Voltage:   213.1 V
+Output Frequency: 50.0 Hz
+Battery Voltage:: 13.3 V
+Battery Current:  14.5 A
+Battery SOC:      82 %
+Transform Temp:   39 C
