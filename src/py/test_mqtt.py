@@ -9,7 +9,7 @@ import time
 # Publisher
 def publish_message():
     client = mqtt.Client()
-    client.connect("localhost", 1883, 60)
+    client.connect("127.0.0.1", 1883, 60)
     client.loop_start()
     _count = 0;
     while True:
