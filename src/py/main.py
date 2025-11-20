@@ -14,25 +14,35 @@ import paho.mqtt.client as mqtt
 #)
 
 
-def init_all(port_name):
+def init_all():
     print("init_all()")
     data0 = b"00000000000000000000000000000000000000000000000000000000000"
     format_string = '>BHHHHHHHHHHHHHHHHHHHHHHHHHHHI'
     ups_data = struct.unpack(format_string, data0)
 
-    tty_port = serial.Serial(
+#    tty_port = serial.Serial(
 #        port='/dev/ttyUSB0',
-        port=port_name,
-        baudrate=9600,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
-        timeout=1 # Read timeout in seconds
-    )
-    time.sleep(0.5) # Give the port some time to initialize
-    return tty_port, ups_data
+#        port=port_name,
+#        baudrate=9600,
+#        bytesize=serial.EIGHTBITS,
+#        parity=serial.PARITY_NONE,
+#        timeout=1 # Read timeout in seconds
+#    )
+#    time.sleep(0.5) # Give the port some time to initialize
+    return ups_data
 
-def read_serial_data_EP20(ups_data, tty_port):
+def read_serial_data_EP20(ups_data, port_name):
     try:
+        tty_port = serial.Serial(
+#            port='/dev/ttyUSB0',
+                port=port_name,
+            baudrate=9600,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            timeout=1 # Read timeout in seconds
+        )
+        time.sleep(0.5) # Give the port some time to initialize
+
         #print("read_serial_data_EP20()")
         #print(f"ups data befor read: {ups_data}")
         if tty_port.isOpen():
@@ -83,18 +93,20 @@ def read_serial_data_EP20(ups_data, tty_port):
         sys.exit(1)
     finally:
         #print("finally: end of read/write")
+        if tty_port.isOpen():
+            tty_port.close();
         return ups_data
 
 
 # MQTT Publisher
-def publish_message(ups_data, time_interval):
+def publish_message(port_name, ups_data, time_interval):
     client = mqtt.Client()
     client.connect("localhost", 1883, 60)
     client.loop_start()
     _count = 0;
     while True:
 #        message = f"Message {_count}"
-        ups_data = read_serial_data_EP20(ups_data, tty_port)
+        ups_data = read_serial_data_EP20(ups_data, port_name)
         message = f"Message #{_count}: {ups_data}"
         client.publish("test/topic", message)
         #print(f"Published: {message}")
@@ -105,6 +117,6 @@ def publish_message(ups_data, time_interval):
 
 if __name__ == "__main__":
     time_interval = 5; #sec, for debugging
-    tty_port, ups_data = init_all('/dev/ttyUSB0');
-    print (tty_port, ups_data);
-    publish_message(ups_data, time_interval)
+    ups_data = init_all();
+    print (ups_data);
+    publish_message('/dev/ttyUSB0',ups_data, time_interval)
