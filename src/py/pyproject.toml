@@ -1,0 +1,5 @@
+[project]
+name = "MustPower EP20 Inventer"
+
+[tool.pyside6-project]
+files = ["main.py"]
