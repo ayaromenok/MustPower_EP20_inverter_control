@@ -33,16 +33,16 @@ def init_all(port_name):
 
 def read_serial_data_EP20(ups_data, tty_port):
     try:
-        print("read_serial_data_EP20()")
-        print(f"ups data befor read: {ups_data}")
+        #print("read_serial_data_EP20()")
+        #print(f"ups data befor read: {ups_data}")
         if tty_port.isOpen():
-            print(f"port open{tty_port}")
+            #print(f"port open{tty_port}")
             #byte_list0 = [0x0A, 0x03, 0x79, 0x18, 0x00, 0x07, 0x9c, 0x28] # handshake?
             byte_list1 = [0x0A, 0x03, 0x75, 0x30, 0x00, 0x1B, 0x1E, 0xB9] # responce 59 byte
             #byte_list2 = [0x0A, 0x03, 0x79, 0x18, 0x00, 0x0A, 0x5D, 0xED] # responce 25 byte
 
             tty_port.write(serial.to_bytes(byte_list1))
-            print(f"Sent byte list: {byte_list1}")
+            #print(f"Sent byte list: {byte_list1}")
             time.sleep(0.1) #0.1 is good value
 
             # Read binary data
@@ -50,8 +50,7 @@ def read_serial_data_EP20(ups_data, tty_port):
 
             if data1:
                 data1_size = sys.getsizeof(data1)
-                print(f"Received data: {data1.hex()}") # Print as hex string
-                print(f"Data size: {data1_size}")
+                print(f"Received {data1_size} bytes, data:{data1.hex()}") # Print as hex string
                 # B - uint8, H - uint16, I - uint32, Q - uint64
                 format_string1 = '>BHHHHHHHHHHHHHHHHHHHHHHHHHHHI'
                 ups_data = struct.unpack(format_string1, data1)
@@ -78,10 +77,12 @@ def read_serial_data_EP20(ups_data, tty_port):
                 print("No data received.")
         else:
             print("Could not open serial port.")
+
     except:
         print("read_serial_data_EP20:something went wrong")
     finally:
-        print("finally: end of read/write")
+        #print("finally: end of read/write")
+        return ups_data
 
 
 # MQTT Publisher
@@ -92,7 +93,7 @@ def publish_message(ups_data, time_interval):
     _count = 0;
     while True:
 #        message = f"Message {_count}"
-        read_serial_data_EP20(ups_data, tty_port)
+        ups_data = read_serial_data_EP20(ups_data, tty_port)
         message = f"Message #{_count}: {ups_data}"
         client.publish("test/topic", message)
         #print(f"Published: {message}")
