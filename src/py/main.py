@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 
 def init_all():
     print("init_all()")
-    data0 = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    data0 = b"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
     format_string = '>BHHHHHHHHHHHHHHHHHHHHHHHHHHHI'
     ups_data = struct.unpack(format_string, data0)
     return ups_data
@@ -45,7 +45,13 @@ def read_serial_data_EP20(ups_data, port_name):
                 print(f"Received {data1_size} bytes, data:{data1.hex()}") # Print as hex string
                 # B - uint8, H - uint16, I - uint32, Q - uint64
                 format_string1 = '>BHHHHHHHHHHHHHHHHHHHHHHHHHHHI'
+
+                old_ups_data = ups_data;
                 ups_data = struct.unpack(format_string1, data1)
+                if (ups_data[20] == 0) & (ups_data[0] != 1):
+                    print ("use old values")
+                    ups_data = old_ups_data;
+
                 gridVoltage = ups_data[7]*0.1; #V
                 gridFreq = ups_data[8]*0.1;    #Hz
                 outVoltage = ups_data[9]*0.1;  #V
@@ -90,21 +96,21 @@ def publish_message(port_name, ups_data, time_interval):
 #        message = f"Message {_count}"
         ups_data = read_serial_data_EP20(ups_data, port_name)
 #ToDo: don't send 0000000(zeros)
-        client.publish("EP20/battery_voltage", ups_data[16]*0.1)
-        client.publish("EP20/battery_current", ups_data[17]*0.1)
+        client.publish("EP20/battery_voltage", round(ups_data[16]*0.1,1))
+        client.publish("EP20/battery_current", round(ups_data[17]*0.1,1))
         client.publish("EP20/battery_SOC", ups_data[19])
-        client.publish("EP20/UPS_transformer_temp", ups_data[20])
-        client.publish("EP20/grid_voltage", ups_data[7]*0.1)
-        client.publish("EP20/grid_frequency", ups_data[8]*0.1)
-        client.publish("EP20/UPS_output_voltage", ups_data[9]*0.1)
-        client.publish("EP20/UPS_output_frequency", ups_data[10]*0.1)
+        client.publish("EP20/transformer_temp", ups_data[20])
+        client.publish("EP20/grid_voltage", round(ups_data[7]*0.1,1))
+        client.publish("EP20/grid_frequency",round( ups_data[8]*0.1,1))
+        client.publish("EP20/output_voltage", round(ups_data[9]*0.1,1))
+        client.publish("EP20/output_frequency", round(ups_data[10]*0.1,1))
 #        _count += 1
         time.sleep(time_interval)
     client.loop_stop()
     client.disconnect()
 
 if __name__ == "__main__":
-    time_interval = 5; #sec, for debugging
+    time_interval = 10; #sec, for debugging
     ups_data = init_all();
     print (ups_data);
     publish_message('/dev/ttyUSB0',ups_data, time_interval)
