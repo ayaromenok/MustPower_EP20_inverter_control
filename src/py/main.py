@@ -16,8 +16,7 @@ def init_all():
 def read_serial_data_EP20(ups_data, port_name):
     try:
         tty_port = serial.Serial(
-#            port='/dev/ttyUSB0',
-                port=port_name,
+            port=port_name,
             baudrate=9600,
             bytesize=serial.EIGHTBITS,
             parity=serial.PARITY_NONE,
@@ -25,8 +24,6 @@ def read_serial_data_EP20(ups_data, port_name):
         )
         time.sleep(0.5) # Give the port some time to initialize
 
-        #print("read_serial_data_EP20()")
-        #print(f"ups data befor read: {ups_data}")
         if tty_port.isOpen():
             #print(f"port open{tty_port}")
             #byte_list0 = [0x0A, 0x03, 0x79, 0x18, 0x00, 0x07, 0x9c, 0x28] # handshake?
@@ -34,7 +31,6 @@ def read_serial_data_EP20(ups_data, port_name):
             #byte_list2 = [0x0A, 0x03, 0x79, 0x18, 0x00, 0x0A, 0x5D, 0xED] # responce 25 byte
 
             tty_port.write(serial.to_bytes(byte_list1))
-            #print(f"Sent byte list: {byte_list1}")
             time.sleep(0.5) #0.1 is good value
 
             # Read binary data
@@ -50,13 +46,12 @@ def read_serial_data_EP20(ups_data, port_name):
                 ups_data = struct.unpack(format_string1, data1)
                 if (ups_data[20] == 0) & (ups_data[0] != 1): #sometime all zeros came from port
                     print ("use old values")
-                    ups_data = old_ups_data;
+                    ups_data = old_ups_data
+                if ups_data[17] >= (300+100): # when battery discarged - value 65468 appear instead of 0#; 300 is 30Amps - maximus possible value fro Ep20 series
+                     print ("charge current is 65468, need to fix to 0")
+# WtF wrong with next line?
+#                     ups_data[17] = 0
 
-#                if (ups_data[17] > 300): # when battery discarged - value 65468 appear isntead of 0#
-#                    ups_data[17] = 0;
-#                print(f"Work State:       {ups_data[4]}")
-#                print(f"Battery Class:    {ups_data[5]} V")
-#                print(f"Rated Power:      {ups_data[6]} W")
                 print(f"Grid Voltage:     {(ups_data[7]*0.1):.1f} V")
                 print(f"Grid Frequence:   {(ups_data[8]*0.1):.1f} Hz")
                 print(f"Output Voltage:   {(ups_data[9]*0.1):.1f} V")
