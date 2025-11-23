@@ -65,7 +65,7 @@ def read_serial_data_EP20(ups_data, port_name):
 #                print(f"Transform Temp:   {ups_data[20]} C")
 
             else:
-                print("No data received.")
+                print("\nNo data received.")
         else:
             print("Could not open serial port.")
 
@@ -84,13 +84,11 @@ def publish_message(port_name, ups_data, time_interval):
     client = mqtt.Client()
     client.connect("localhost", 1883, 60)
     client.loop_start()
-#    _count = 0;
     while True:
-#        message = f"Message {_count}"
         ups_data = read_serial_data_EP20(ups_data, port_name)
 #ToDo: don't send 0000000(zeros)
         client.publish("EP20/battery_voltage", round(ups_data[16]*0.1,1))
-        client.publish("EP20/battery_charge_current", round(ups_data[17]*0.1,1))
+        client.publish("EP20/battery_charge_current", round(ups_data[17]*0.1,1) if ups_data[17] < 300 and ups_data[17] > 20 else 0 )
         client.publish("EP20/battery_load_current", round(ups_data[11]))
         client.publish("EP20/battery_SOC", ups_data[19])
         client.publish("EP20/load_current", ups_data[11])
@@ -100,10 +98,11 @@ def publish_message(port_name, ups_data, time_interval):
         client.publish("EP20/grid_frequency",round( ups_data[8]*0.1,1))
         client.publish("EP20/output_voltage", round(ups_data[9]*0.1,1))
         client.publish("EP20/output_frequency", round(ups_data[10]*0.1,1))
-#        _count += 1
+        print(".", end="")
         time.sleep(time_interval)
     client.loop_stop()
     client.disconnect()
+
 
 if __name__ == "__main__":
     time_interval = 5; #sec, for debugging
