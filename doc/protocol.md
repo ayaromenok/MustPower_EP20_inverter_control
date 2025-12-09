@@ -22,33 +22,34 @@
 
 #### str0:
 
-| Data      | Name        | Type |
-|:----------|:------------|:----:|
-| int8?     | MachineType | | 
-| int16     | SoftwareVersion | |
-| int16     | WorkState | |
-| int16     | BatClass | V |
-| int16     | RatedPower| |
-| int16*0.1 | GridVoltage | V |
-| int16*0.1 | GridFrequency | Hz |
-| int16*0.1 | OutputVoltage | V |
-| int16*0.1 | OutputFrequency | V |
-| int16*0.1 | LoadCurrent | A |
-| int16     | LoadPower | W |
-| int16     | LoadPercent| % |
-| int16     | LoadState | |
-| int16*0.1 | BatteryVoltage | V |
-| int16*0.1 | BatteryCurrent  | A |
-| int16     | BatterySoc | |
-| int16     | TransformerTem | C |
-| int16     | AvrState | |
-| int16     | BuzzerState | |
-| int16     | Fault | |
-| int16     | Alarm | |
-| int16     | ChargeState | |
-| int16     | ChargeFlag | |
-| int16     | MainSw| |
-| int16     | DelayType| |
+| # | Data      | Org Nam     | Type | Short name|
+|--:|:----------|:------------|:----:|:--|
+| | int8?     | MachineType | | mt|
+| | int16     | SoftwareVersion | | swv|
+|4| int16     | WorkState |4 - from grid, 3 - on battery | ws|
+|5| int16     | BatClass | V | bcl |
+|6| int16     | RatedPower|W | rp|
+|7| int16*0.1 | GridVoltage | V | gv |
+|8| int16*0.1 | GridFrequency | Hz | gf|
+|9| int16*0.1 | OutputVoltage | V | ov |
+|10| int16*0.1 | OutputFrequency | V |of|
+|11| int16     | LoadCurrent | A |lc|
+|12| int16     | LoadPower | W |lp|
+|13| int16     | ? | | nnm0|
+|14| int16     | LoadPercent| % | lpc|
+|15| int16     | LoadState | | ls |
+|16| int16*0.1 | BatteryVoltage | V | bv |
+|17| int16*0.1 | BatteryCurrent  | A | bc |
+|18| int16     | BatterySOC |% | bsoc |
+|19| int16     | TransformerTemp | C | tt |
+|20| int16     | AvrState | | as |
+|21| int16     | BuzzerState | | bs|
+|22| int16     | Fault | | flt |
+|23| int16     | Alarm | | alrm|
+|24| int16     | ChargeState | | cs |
+|25| int16     | ChargeFlag | | cf|
+|26| int16     | MainSw| | msw
+|27| int16     | DelayType| | dt |
 
 #### str1:
 | Data      | Name        | Type |
