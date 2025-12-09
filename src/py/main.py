@@ -31,7 +31,7 @@ def read_serial_data_EP20(ups_data, port_name):
             #byte_list2 = [0x0A, 0x03, 0x79, 0x18, 0x00, 0x0A, 0x5D, 0xED] # responce 25 byte
 
             tty_port.write(serial.to_bytes(byte_list1))
-            time.sleep(0.5) #0.1 is good value
+            time.sleep(0.5) #0.5 is good value
 
             # Read binary data
             data1 = tty_port.read(59) # Read up to 59 bytes
@@ -87,8 +87,12 @@ def publish_message(port_name, ups_data, time_interval):
     while True:
         ups_data = read_serial_data_EP20(ups_data, port_name)
 #ToDo: don't send 0000000(zeros)
-        client.publish("EP20/battery_voltage", round(ups_data[16]*0.1,1))
-        client.publish("EP20/battery_charge_current", round(ups_data[17]*0.1,1) if ups_data[17] < 300 and ups_data[17] > 20 else 0 )
+        bv = round(ups_data[16]*0.1,1) #Battery Voltage
+        bcc = round(ups_data[17]*0.1,1) if ups_data[17] < 300 and ups_data[17] > 20 else 0 #Battery Charge Current
+        bcp = round (bv*bcc,1)          #Charge Power
+        client.publish("EP20/battery_voltage", bv)
+        client.publish("EP20/battery_charge_current", bcc )
+        client.publish("EP20/battery_charge_power", bcp )
         client.publish("EP20/battery_load_current", round(ups_data[11]))
         client.publish("EP20/battery_SOC", ups_data[19])
         client.publish("EP20/load_current", ups_data[11])
@@ -105,7 +109,7 @@ def publish_message(port_name, ups_data, time_interval):
 
 
 if __name__ == "__main__":
-    print("EP20 Power Monitor version XXX from 20251129")
+    print("EP20 Power Monitor version XXX from 20251209")
     time_interval = 5; #sec, for debugging
     ups_data = init_all();
     publish_message('/dev/ttyUSB0',ups_data, time_interval)
