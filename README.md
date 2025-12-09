@@ -35,7 +35,7 @@ Inverter use serial converter CH340, so appear in `lsusb` output as follow:
 ### Run as sevice
 
  - [Service file provided](./src/py/ep20.service)
- - [Ho to documentation](./doc/run_as_service.md)
+ - [How to documentation](./doc/run_as_service.md)
 
 ## Protocol description
 
